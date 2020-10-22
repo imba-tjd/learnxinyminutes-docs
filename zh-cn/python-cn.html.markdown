@@ -6,6 +6,7 @@ contributors:
     - ["Andre Polykanine", "https://github.com/Oire"]
 translators:
     - ["Geoff Liu", "http://geoffliu.me"]
+    - ["imba-tjd", "https://github.com/imba-tjd"]
 filename: learnpython-cn.py
 lang: zh-cn
 ---
@@ -13,72 +14,78 @@ lang: zh-cn
 Python 是由吉多·范罗苏姆(Guido Van Rossum)在 90 年代早期设计。
 它是如今最常用的编程语言之一。它的语法简洁且优美，几乎就是可执行的伪代码。
 
-欢迎大家斧正。英文版原作 Louie Dinh [@louiedinh](http://twitter.com/louiedinh)
-邮箱 louiedinh [at] [谷歌的信箱服务]。中文翻译 Geoff Liu。
-
-注意：这篇教程是基于 Python 3 写的。如果你想学旧版 Python 2，我们特别有[另一篇教程](http://learnxinyminutes.com/docs/pythonlegacy/)。
+注意：这篇教程是基于 Python 3 写的。如果你想学旧版 Python 2，我们特别有[另一篇教程](https://learnxinyminutes.com/docs/zh-cn/pythonlegacy-cn/)。
 
 ```python
 
 # 用井字符开头的是单行注释
 
 """ 多行字符串用三个引号
-    包裹，也常被用来做多
-    行注释
+    包裹，也常被用做文档
 """
 
 ####################################################
 ## 1. 原始数据类型和运算符
 ####################################################
 
-# 整数
+# 数字
 3  # => 3
 
 # 算术没有什么出乎意料的
 1 + 1  # => 2
 8 - 1  # => 7
 10 * 2  # => 20
-
-# 但是除法例外，会自动转换成浮点数
 35 / 5  # => 7.0
-5 / 3  # => 1.6666666666666667
 
-# 整数除法的结果都是向下取整
-5 // 3     # => 1
-5.0 // 3.0 # => 1.0 # 浮点数也可以
--5 // 3  # => -2
--5.0 // 3.0 # => -2.0
+# 整数除法对正负数都向下取整
+5 // 3       # => 1
+-5 // 3      # => -2
+5.0 // 3.0   # => 1.0 # 浮点数也可以
+-5.0 // 3.0  # => -2.0
 
-# 浮点数的运算结果也是浮点数
-3 * 2.0 # => 6.0
+# 普通除法的结果永远是浮点数
+10.0 / 3  # => 3.3333333333333335
 
 # 模除
 7 % 3 # => 1
 
 # x的y次方
-2**4 # => 16
+2**3  # => 8
 
 # 用括号决定优先级
+1 + 3 * 2  # => 7
 (1 + 3) * 2  # => 8
 
-# 布尔值
-True
-False
+# 布尔值，注意大写
+True  # => True
+False  # => False
 
 # 用not取非
-not True  # => False
+not True   # => False
 not False  # => True
 
-# 逻辑运算符，注意and和or都是小写
-True and False # => False
-False or True # => True
+# 布尔运算符，注意and和or都是小写
+True and False  # => False
+False or True   # => True
 
-# 整数也可以当作布尔值
-0 and 2 # => 0
--5 or 0 # => -5
-0 == False # => True
-2 == True # => False
-1 == True # => True
+# True和False其实是具有关键字的1和0
+True + True # => 2
+True * 8    # => 8
+False - 5   # => -5
+
+# 比较运算符把True和False当作数字值看
+0 == False  # => True
+1 == True   # => True
+2 == True   # => False
+-5 != False # => True
+
+# Using boolean logical operators on ints casts them to booleans for evaluation, but their non-cast value is returned
+# 不要把bool(ints)跟二进制的按位与和按位或(&,|)弄混
+bool(0)     # => False
+bool(4)     # => True
+bool(-6)    # => True
+0 and 2     # => 0
+-5 or 0     # => -5
 
 # 用==判断相等
 1 == 1  # => True
@@ -94,9 +101,21 @@ False or True # => True
 2 <= 2  # => True
 2 >= 2  # => True
 
+# 判断值在一个范围中
+1 < 2 and 2 < 3  # => True
+2 < 3 and 3 < 2  # => False
 # 大小比较可以连起来！
 1 < 2 < 3  # => True
 2 < 3 < 2  # => False
+
+# is和==相比较：is检查两个变量是否引用同一个对象，而==检查那两个对象是否有相同的值
+a = [1, 2, 3, 4]  # a指向一个新列表 [1, 2, 3, 4]
+b = a             # b指向的就是a指向的
+b is a            # => True，a和b引用同一个对象
+b == a            # => True，a和b的对象相等
+b = [1, 2, 3, 4]  # b指向一个新列表 [1, 2, 3, 4]
+b is a            # => False，a和b引用不同对象
+b == a            # => True，a和b的对象相等
 
 # 字符串用单引双引都可以
 "这是个字符串"
@@ -104,30 +123,27 @@ False or True # => True
 
 # 用加号连接字符串
 "Hello " + "world!"  # => "Hello world!"
+# 字符串字面量 (不是变量) 也可以不用加号连起来
+"Hello " "world!"    # => "Hello world!"
 
 # 字符串可以被当作字符列表
-"This is a string"[0]  # => 'T'
+"Hello world!"[0]  # => 'H'
 
-# 用.format来格式化字符串
-"{} can be {}".format("strings", "interpolated")
+# 获取字符串长度
+len("This is a string")  # => 16
 
-# 可以重复参数以节省时间
-"{0} be nimble, {0} be quick, {0} jump over the {1}".format("Jack", "candle stick")
-# => "Jack be nimble, Jack be quick, Jack jump over the candle stick"
-
-# 如果不想数参数，可以用关键字
-"{name} wants to eat {food}".format(name="Bob", food="lasagna") 
-# => "Bob wants to eat lasagna"
-
-# 如果你的Python3程序也要在Python2.5以下环境运行，也可以用老式的格式化语法
-"%s can be %s the %s way" % ("strings", "interpolated", "old")
+# 使用f-strings来格式化字符串
+name = "Reiko"
+f"She said her name is {name}." # => "She said her name is Reiko"
+# 几乎可以把任何Python表达式放到大括号里 and it will be output in the string.
+f"{name} is {len(name)} characters long." # => "Reiko is 5 characters long."
 
 # None是一个对象
 None  # => None
 
 # 当与None进行比较时不要用 ==，要用is。is是用来比较两个变量是否指向同一个对象。
 "etc" is None  # => False
-None is None  # => True
+None is None   # => True
 
 # None，0，空字符串，空列表，空字典都算是False
 # 所有其他值都是True
@@ -136,22 +152,31 @@ bool("")  # => False
 bool([]) # => False
 bool({}) # => False
 
-
 ####################################################
 ## 2. 变量和集合
 ####################################################
 
 # print是内置的打印函数
-print("I'm Python. Nice to meet you!")
+print("I'm Python. Nice to meet you!")  # => I'm Python. Nice to meet you!
+
+# 默认情况下print函数会在结尾打印一个新行，使用可选参数end来改变字符串结尾
+print("Hello, World", end="!")  # => Hello, World!
+
+# 从控制台获得输入数据的简单方法
+input_string_var = input("Enter some data: ") # 返回的数据为字符串
 
 # 在给变量赋值前不用提前声明
-# 传统的变量命名是小写，用下划线分隔单词
+# 习惯上变量命名是小写，用下划线分隔单词
 some_var = 5
 some_var  # => 5
 
 # 访问未赋值的变量会抛出异常
 # 参考流程控制一段来学习异常处理
 some_unknown_var  # 抛出NameError
+
+# if可被用作表达式
+# 等价于C的'?:'三元表达式
+"yay!" if 0 > 1 else "nay!"  # => "nay!"
 
 # 用列表(list)储存序列
 li = []
@@ -189,7 +214,7 @@ li[::-1]   # => [3, 4, 2, 1]
 # 可以用三个参数的任何组合来构建切割
 # li[始:终:步伐]
 
-# 用del删除任何一个元素
+# 用del删除任意一个元素
 del li[2]   # li is now [1, 2, 3]
 
 # 列表可以相加
